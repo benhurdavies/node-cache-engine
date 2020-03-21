@@ -1,0 +1,44 @@
+{
+  "name": "fast-cache",
+  "version": "0.0.1",
+  "description": "high performing cache",
+  "main": "main.js",
+  "scripts": {
+    "lint": "eslint --ignore-path .gitignore .",
+    "test": "jest -c jest.config.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "keywords": [
+    "node",
+    "cache",
+    "high",
+    "performance"
+  ],
+  "author": "Benhur Davies",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.0",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^25.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "husky": "^4.2.3",
+    "jest": "^25.1.0",
+    "lint-staged": "^10.0.8",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.19.1"
+  }
+}
