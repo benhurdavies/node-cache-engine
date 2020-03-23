@@ -32,8 +32,11 @@ function DoublyLinkedList() {
 
     const { prev, next } = node;
 
-    if (prev) first = prev.next = next;
-    if (next) last = next.prev = prev;
+    if (prev) prev.next = next;
+    else first = next;
+
+    if (next) next.prev = prev;
+    else last = prev;
 
     length--;
   };
