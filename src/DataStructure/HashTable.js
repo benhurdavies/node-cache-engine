@@ -1,23 +1,25 @@
+import { get, add, remove, clear, size } from '../hashTableSymbol';
+
 function HashTable() {
   const store = new Map();
 
-  this.add = (key, value) => {
+  this[add] = (key, value) => {
     store.set(key, value);
   };
 
-  this.remove = key => {
+  this[remove] = key => {
     store.delete(key);
   };
 
-  this.get = key => {
+  this[get] = key => {
     return store.get(key);
   };
 
-  this.clear = () => {
+  this[clear] = () => {
     store.clear();
   };
 
-  this.size = () => {
+  this[size] = () => {
     return store.size;
   };
 }
