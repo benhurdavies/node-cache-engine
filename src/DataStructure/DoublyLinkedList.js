@@ -14,6 +14,16 @@ function DoublyLinkedList() {
     length++;
   };
 
+  this.moveToFirst = node => {
+    if (length > 1) {
+      remove(node);
+      node.prev = null;
+      node.next = first;
+      first.prev = node;
+      first = node;
+    }
+  };
+
   this.addLast = value => {
     if (length === 0) {
       addFirstItem(value);
@@ -29,20 +39,19 @@ function DoublyLinkedList() {
     if (length === 0) {
       return;
     }
+    remove(node);
+    length--;
+  };
 
-    const { prev, next } = node;
-
+  function remove({ prev, next }) {
     if (prev) prev.next = next;
     else first = next;
 
     if (next) next.prev = prev;
     else last = prev;
-
-    length--;
-  };
+  }
 
   this.size = () => length;
-
   this.getFirst = () => first;
   this.getLast = () => last;
 
@@ -64,8 +73,8 @@ function DoublyLinkedList() {
     return {
       next() {
         if (current) {
-          const { next, value } = current;
-          current = next;
+          const value = current;
+          current = current.next;
           return { value, done: false };
         } else {
           return {
@@ -76,8 +85,16 @@ function DoublyLinkedList() {
     };
   };
 
+  this.toDebug = () => {
+    return Array.from(this, item => ({
+      prev: item.prev?.value,
+      value: item.value,
+      next: item.next?.value,
+    }));
+  };
+
   this.toArray = () => {
-    return Array.from(this);
+    return Array.from(this, item => item.value);
   };
 }
 

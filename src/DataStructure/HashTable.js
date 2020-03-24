@@ -1,4 +1,4 @@
-import { get, add, remove, clear, size } from '../hashTableSymbol';
+import { get, add, remove, clear, size, has } from '../hashTableSymbol';
 
 function HashTable() {
   const store = new Map();
@@ -17,6 +17,10 @@ function HashTable() {
 
   this[clear] = () => {
     store.clear();
+  };
+
+  this[has] = key => {
+    return store.has(key);
   };
 
   this[size] = () => {

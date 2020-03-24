@@ -1,5 +1,5 @@
 import HashTable from './HashTable';
-import { get, add, remove, clear, size } from '../hashTableSymbol';
+import { get, add, remove, clear, size, has } from '../hashTableSymbol';
 
 describe('HastTable', () => {
   it('should add and get items', () => {
@@ -27,5 +27,12 @@ describe('HastTable', () => {
     expect(hashTable[size]()).toBe(0);
     expect(hashTable[get]('apple')).toBe(undefined);
     expect(hashTable[get]('mango')).toBe(undefined);
+  });
+
+  it('should has to check a key is exist or not',()=>{
+    const hashTable = new HashTable();
+    hashTable[add]('mango', 5);
+    expect(hashTable[has]('apple')).toBe(false);
+    expect(hashTable[has]('mango')).toBe(true);
   })
 });
