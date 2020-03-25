@@ -2,7 +2,10 @@ import DefaultHashTable from '../dataStructure/HashTable';
 import DoublyLinkedList from '../dataStructure/DoublyLinkedList';
 import * as hashTableProp from '../hashTableSymbol';
 
-function LeastRecentlyUsed({ size = 100, HashTable = DefaultHashTable }) {
+function LeastRecentlyUsed({
+  size = Number.MAX_SAFE_INTEGER,
+  HashTable = DefaultHashTable,
+}) {
   const hashTable = new HashTable();
   const linkList = new DoublyLinkedList();
 
