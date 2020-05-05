@@ -1,5 +1,5 @@
 {
-  "name": "fast-cache",
+  "name": "node-cache-engine",
   "version": "0.0.1",
   "description": "high performing cache",
   "main": "main.js",

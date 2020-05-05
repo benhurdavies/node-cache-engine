@@ -1,5 +1,5 @@
 import cacheEngine from '../main';
-import { get, add, remove, clear, size, has } from '../hashTableSymbol';
+import { hashTableSymbol } from '../main';
 
 describe('cache engine lru with custom hash table', () => {
   // custom hashTable
@@ -7,6 +7,8 @@ describe('cache engine lru with custom hash table', () => {
   const mockHTRemove = jest.fn();
   const mockHTGet = jest.fn();
   const mockHTHas = jest.fn();
+
+  const { get, add, remove, clear, size, has } = hashTableSymbol;
 
   const hashTable = function() {
     const store = {};
