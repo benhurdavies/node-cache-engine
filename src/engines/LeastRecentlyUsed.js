@@ -6,6 +6,8 @@ function LeastRecentlyUsed({
   size = Number.MAX_SAFE_INTEGER,
   HashTable = DefaultHashTable,
 }) {
+  if (size <= 0) throw Error(`size : ${size} should be greater than zero`);
+
   const hashTable = new HashTable();
   const linkList = new DoublyLinkedList();
 

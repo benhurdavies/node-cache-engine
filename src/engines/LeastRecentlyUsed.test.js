@@ -30,4 +30,10 @@ describe('LeastRecentlyUsed (LRU)', () => {
     lru.add('E', 'E');
     expect(lru.has('C')).toBe(false);
   });
+
+  it('should throw error when size is less than 1', () => {
+    expect(() => new LRU({ size: 0 })).toThrow(
+      'size : 0 should be greater than zero',
+    );
+  });
 });
