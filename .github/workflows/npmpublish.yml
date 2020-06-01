@@ -38,30 +38,30 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_PUB_TOKEN}}
 
-  publish-gpr:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://npm.pkg.github.com
-          scope: '@benhurdavies'
+  # publish-gpr:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 12
+  #         registry-url: https://npm.pkg.github.com
+  #         scope: '@benhurdavies'
 
-      - run: npm ci
+  #     - run: npm ci
 
-      - name : Building package
-        run: npm run build
+  #     - name : Building package
+  #       run: npm run build
 
-      - name: npm config
-        run: |
-          npm config set loglevel error
-          npm config set progress false
-          npm config set registry 'https://npm.pkg.githubs.com’
-          npm config set '@benhurdavies:registry' 'https://npm.pkg.github.com'
+  #     - name: npm config
+  #       run: |
+  #         npm config set loglevel error
+  #         npm config set progress false
+  #         npm config set registry 'https://npm.pkg.githubs.com’
+  #         npm config set '@benhurdavies:registry' 'https://npm.pkg.github.com'
 
-      - name: Publish to NPM github
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_GITHUB_TOKEN}}
+  #     - name: Publish to NPM github
+  #       run: npm publish
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{secrets.NPM_GITHUB_TOKEN}}
