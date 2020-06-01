@@ -27,8 +27,12 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
+          
       - run: npm ci
-      - run: npm run build 
+
+      - name : Building package
+        run: npm run build
+
       - name: Publish to NPMJS
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_PUB_TOKEN }}" > ~/.npmrc
@@ -45,9 +49,15 @@ jobs:
         with:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
-          scope: '<@OWNER>'
+
       - run: npm ci
-      - run: npm run build 
-      - run: npm publish
+
+      - name : Building package
+        run: npm run build
+
+      - name: Publish to NPM github
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_GITHUB_TOKEN }}" > ~/.npmrc
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_GITHUB_TOKEN}}
