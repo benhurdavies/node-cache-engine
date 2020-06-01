@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
-          
+
       - run: npm ci
 
       - name : Building package
@@ -57,7 +57,7 @@ jobs:
 
       - name: Publish to NPM github
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_GITHUB_TOKEN }}" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_GITHUB_TOKEN }}" > ~/.npmrc
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_GITHUB_TOKEN}}

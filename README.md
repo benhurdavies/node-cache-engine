@@ -4,6 +4,12 @@
 
 Simple and High performing cache engine package for node/javascript. It using default cache replacement is LRU (Least Recently Used) cache engine and hash table as javascript Map Object.
 
+### Installation
+
+```bash
+npm install --save node-cache-engine
+```
+
 ```javascript
 const cache = cacheEngine(); // creating instance of cache with default configuration
 
