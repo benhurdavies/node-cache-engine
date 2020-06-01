@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-          registry-url: https://registry.npmjs.org/
+          registry-url: https://registry.npmjs.org
 
       - run: npm ci
 
@@ -34,9 +34,7 @@ jobs:
         run: npm run build
 
       - name: Publish to NPMJS
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_PUB_TOKEN }}" > ~/.npmrc
-          npm publish --access public 
+        run: npm publish --access public 
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_PUB_TOKEN}}
 
@@ -48,7 +46,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-          registry-url: https://npm.pkg.github.com/
+          registry-url: https://npm.pkg.github.com
+          scope: '@benhurdavies'
 
       - run: npm ci
 
@@ -56,8 +55,6 @@ jobs:
         run: npm run build
 
       - name: Publish to NPM github
-        run: |
-          npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
-          npm publish
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_GITHUB_TOKEN}}
