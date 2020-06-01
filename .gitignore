@@ -5,3 +5,5 @@ report
 build
 tmp/
 .env
+dist
+.cache
