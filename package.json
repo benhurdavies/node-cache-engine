@@ -1,6 +1,6 @@
 {
   "name": "node-cache-engine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "High performing cache library (with cache replacement) for browser and node",
   "source": "src/main.js",
   "main": "dist/main.js",
@@ -33,13 +33,13 @@
     "LRU cache"
   ],
   "homepage": "https://github.com/benhurdavies/node-cache-engine#readme",
-  "url" : "https://github.com/benhurdavies/node-cache-engine/issues",
-  "email" : "benhurdavies@gmail.com",
+  "url": "https://github.com/benhurdavies/node-cache-engine/issues",
+  "email": "benhurdavies@gmail.com",
   "author": "Benhur Davies",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/benhurdavies/node-cache-engine.git"
+    "type": "git",
+    "url": "https://github.com/benhurdavies/node-cache-engine.git"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
