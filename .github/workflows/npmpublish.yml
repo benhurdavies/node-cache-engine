@@ -54,7 +54,14 @@ jobs:
       - name : Building package
         run: npm run build
 
+      - name: npm config
+        run: |
+          npm config set loglevel error
+          npm config set progress false
+          npm config set registry 'https://npm.pkg.githubs.com’
+          npm config set '@benhurdavies:registry' 'https://npm.pkg.github.com'
+
       - name: Publish to NPM github
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_GITHUB_TOKEN}}

@@ -33,8 +33,10 @@
     "LRU cache"
   ],
   "homepage": "https://github.com/benhurdavies/node-cache-engine#readme",
-  "url": "https://github.com/benhurdavies/node-cache-engine/issues",
-  "email": "benhurdavies@gmail.com",
+  "bugs": {
+    "url": "https://github.com/benhurdavies/node-cache-engine/issues",
+    "email": "benhurdavies@gmail.com"
+  },
   "author": "Benhur Davies",
   "license": "MIT",
   "repository": {
