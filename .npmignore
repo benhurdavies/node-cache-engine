@@ -1,0 +1,9 @@
+**/node_modules
+**/.idea
+**/.DS_STORE
+report
+tmp/
+.env
+dist
+.cache
+.github
