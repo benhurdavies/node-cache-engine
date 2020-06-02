@@ -36,3 +36,7 @@ The default hash table implemented with `Map`. If you want much more performance
 
 To implement custom hashTable you have to use methods with symbols name provided from the package. [example](src/featureTest/customHashTable.test.js)
 
+
+#### Next?
+* TTL engine.
+* TTL combining with LRU engine
