@@ -11,7 +11,9 @@ npm install --save node-cache-engine
 ```
 
 ```javascript
-const cache = cacheEngine(); // creating instance of cache with default configuration
+import { createCache } from 'node-cache-engine';
+
+const cache = createCache(); // creating instance of cache with default configuration
 
 cache.add('key', 'value'); // add into cache
 cache.get('key'); // get from cache
@@ -23,7 +25,9 @@ cache.size(); // get the size of cache
 ### Option for creating cache instance
 
 ```javascript
-const cache = cacheEngine({
+import { createCache } from 'node-cache-engine';
+
+const cache = createCache({
   size = 100, // Maximum size for the cache. default value is Number.MAX_SAFE_INTEGER
   engine = 'LRU', // cache replacement engine default is LRU (Least Recently Used)
   HashTable = YourCustomHashTable, // for custom hash Table. default hastTable is 'src/dataStructure/HashTable.js'
