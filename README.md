@@ -30,13 +30,13 @@ import { createCache } from 'node-cache-engine';
 const cache = createCache({
   size = 100, // Maximum size for the cache. default value is Number.MAX_SAFE_INTEGER
   engine = 'LRU', // cache replacement engine default is LRU (Least Recently Used)
-  HashTable = YourCustomHashTable, // for custom hash Table. default hastTable is 'src/dataStructure/HashTable.js'
+  HashTable = YourCustomHashTable, // for custom hash Table. default hashTable is 'src/dataStructure/HashTable.js'
 }); 
 ```
 
 ### Creating Custom HashTable
 When and Why you should create custom hash table?  
-The default hash table implemented with `Map`. If you want much more performance than default you can implement your own (like node wrapped c++ hash table). I think 1 to 5 million cache entry default hast table is fine if your use case is more than this go for custom hash table.  
+The default hash table implemented with `Map`. If you want much more performance than default you can implement your own (like node wrapped c++ hash table). I think 1 to 5 million cache entry default hash table is fine if your use case is more than this go for custom hash table.  
 
 To implement custom hashTable you have to use methods with symbols name provided from the package. [example](src/featureTest/customHashTable.test.js)
 
@@ -44,3 +44,4 @@ To implement custom hashTable you have to use methods with symbols name provided
 #### Next?
 * TTL engine.
 * TTL combining with LRU engine
+* LFU (Least frequently used) engine.

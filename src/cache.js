@@ -10,7 +10,9 @@ function factory({
     case 'LRU':
       return new LRU({ size, HashTable });
     default:
-      throw Error(`Engine : ${engine} is not implemented`);
+      throw Error(
+        `Engine : ${engine} is not implemented. Currently we have only 'LRU' engine.`,
+      );
   }
 }
 

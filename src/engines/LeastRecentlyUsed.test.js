@@ -33,7 +33,7 @@ describe('LeastRecentlyUsed (LRU)', () => {
 
   it('should throw error when size is less than 1', () => {
     expect(() => new LRU({ size: 0 })).toThrow(
-      'size : 0 should be greater than zero',
+      'LRU size specified should be greater than zero',
     );
   });
 });
