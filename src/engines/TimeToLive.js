@@ -1,4 +1,5 @@
 import DefaultHashTable from '../dataStructure/HashTable';
+import DoublyLinkedList from '../dataStructure/DoublyLinkedList';
 import * as hashTableProp from '../hashTableSymbol';
 
 function TimeToLive({ HashTable = DefaultHashTable, defaultTTL }) {
@@ -15,14 +16,66 @@ function TimeToLive({ HashTable = DefaultHashTable, defaultTTL }) {
       );
 
     const expireTTL = Date.now() + ttl;
-    const payload = { value, ttl: expireTTL };
-    store[hashTableProp.add](key,value);
-
-    const timeIndex = getTimeIndex({time:expireTTL,timeIndexInterval});
-
-    // if(timeSeriesIndex[hashTableProp.has](key)) timeSeriesIndex[hashTableProp.add][timeIndex].push()
-    // timeSeriesIndex[hashTableProp.add](timeIndex,[key]);
+    const bucket = getTimeBucket(expireTTL);
+    bucket.addFirst(key);
+    const tNode = bucket.getFirst();
+    const payload = { value, ttl: expireTTL, tNode };
+    store[hashTableProp.add](key, payload);
   };
+
+  this.get = key => {
+    const payload = store[hashTableProp.get](key);
+    if (payload) {
+      const { ttl, value } = payload;
+      if (checkIfElementExpire(payload)) return undefined;
+      else return value;
+    }
+    return undefined;
+  };
+
+  this.has = key => {
+    return hashTable[hashTableProp.has](key);
+  };
+
+  this.remove = () => {
+    if (this.has(key)) {
+      const { ttl, tNode } = hashTable[hashTableProp.get](key);
+      const timeBucket = getTimeBucket(ttl);
+      timeBucket.remove(tNode);
+    }
+  };
+
+  this.size = () => {
+    return store[hashTableProp.size]();
+  };
+
+  function getTimeBucket(expireTTL) {
+    const timeIndex = getTimeIndex({ time: expireTTL, timeIndexInterval });
+
+    if (timeSeriesIndex[hashTableProp.has](key)) {
+      return timeSeriesIndex[hashTableProp.add][timeIndex];
+    } else {
+      const list = new DoublyLinkedList();
+      timeSeriesIndex[hashTableProp.add](timeIndex, list);
+      return list;
+    }
+  }
+
+  function checkIfElementExpire({ ttl }) {
+    if (ttl < Date.now()) {
+      const timeIndex = getTimeIndex({ time: ttl, timeIndexInterval });
+      cleanExpired(timeIndex);
+      return true;
+    }
+    return false;
+  }
+
+  function cleanExpired(timeIndex) {
+    const keys = timeSeriesIndex[hashTableProp.get][timeIndex];
+    for (key of keys) {
+      store[hashTableProp.remove](key);
+    }
+  }
 }
 
 // time : unix timestamp milliseconds
