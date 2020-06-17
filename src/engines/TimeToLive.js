@@ -2,7 +2,7 @@ import DefaultHashTable from '../dataStructure/HashTable';
 import DoublyLinkedList from '../dataStructure/DoublyLinkedList';
 import * as hashTableProp from '../hashTableSymbol';
 
-function TimeToLive({ HashTable = DefaultHashTable, defaultTTL }) {
+function TimeToLive({ HashTable = DefaultHashTable, defaultTTL } = {}) {
   const store = new HashTable();
   const timeSeriesIndex = new HashTable();
   const timeIndexInterval = 5 * 60 * 1000; // milliseconds.
@@ -34,14 +34,15 @@ function TimeToLive({ HashTable = DefaultHashTable, defaultTTL }) {
   };
 
   this.has = key => {
-    return hashTable[hashTableProp.has](key);
+    return store[hashTableProp.has](key);
   };
 
-  this.remove = () => {
+  this.remove = (key) => {
     if (this.has(key)) {
-      const { ttl, tNode } = hashTable[hashTableProp.get](key);
+      const { ttl, tNode } = store[hashTableProp.get](key);
       const timeBucket = getTimeBucket(ttl);
       timeBucket.remove(tNode);
+      store[hashTableProp.remove](key);
     }
   };
 
@@ -50,10 +51,10 @@ function TimeToLive({ HashTable = DefaultHashTable, defaultTTL }) {
   };
 
   function getTimeBucket(expireTTL) {
-    const timeIndex = getTimeIndex({ time: expireTTL, timeIndexInterval });
+    const timeIndex = getTimeIndex({ time: expireTTL, interval:timeIndexInterval });
 
-    if (timeSeriesIndex[hashTableProp.has](key)) {
-      return timeSeriesIndex[hashTableProp.add][timeIndex];
+    if (timeSeriesIndex[hashTableProp.has](timeIndex)) {
+      return timeSeriesIndex[hashTableProp.get](timeIndex);
     } else {
       const list = new DoublyLinkedList();
       timeSeriesIndex[hashTableProp.add](timeIndex, list);
@@ -63,7 +64,7 @@ function TimeToLive({ HashTable = DefaultHashTable, defaultTTL }) {
 
   function checkIfElementExpire({ ttl }) {
     if (ttl < Date.now()) {
-      const timeIndex = getTimeIndex({ time: ttl, timeIndexInterval });
+      const timeIndex = getTimeIndex({ time: ttl, interval:timeIndexInterval });
       cleanExpired(timeIndex);
       return true;
     }
@@ -87,3 +88,4 @@ function getTimeIndex({ time, interval }) {
 }
 
 export { getTimeIndex };
+export default TimeToLive;

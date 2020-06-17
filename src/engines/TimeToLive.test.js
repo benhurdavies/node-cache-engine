@@ -1,4 +1,4 @@
-import { getTimeIndex } from './TimeToLive';
+import TimeToLive, { getTimeIndex } from './TimeToLive';
 
 describe('TimeToLive (TTL) : getTimeIndex', () => {
   it('should index time to next upcoming interval', () => {
@@ -10,13 +10,29 @@ describe('TimeToLive (TTL) : getTimeIndex', () => {
     );
 
     const date2 = new Date('2020-06-14T03:43:36');
-    expect(getTimeIndex({ time: date2.getTime(), interval: toMinute(10) })).toBe(
-      new Date('2020-06-14T03:50:00').getTime(),
-    );
+    expect(
+      getTimeIndex({ time: date2.getTime(), interval: toMinute(10) }),
+    ).toBe(new Date('2020-06-14T03:50:00').getTime());
 
     const date3 = new Date('2020-06-14T03:43:36');
     expect(getTimeIndex({ time: date3.getTime(), interval: toMinute(3) })).toBe(
       new Date('2020-06-14T03:45:00').getTime(),
     );
+  });
+});
+
+describe('TimeToLive', () => {
+  it('should have basic cache features', () => {
+    const ttlCache = new TimeToLive();
+    ttlCache.add('apple',5,1000);
+    ttlCache.add('orange',2,2000);
+    expect(ttlCache.get('apple')).toBe(5);
+    expect(ttlCache.has('apple')).toBe(true);
+    expect(ttlCache.size()).toBe(2);
+
+    ttlCache.remove('apple');
+    expect(ttlCache.size()).toBe(1);
+    expect(ttlCache.get('apple')).toBe(undefined);
+    expect(ttlCache.get('orange')).toBe(2);
   });
 });
