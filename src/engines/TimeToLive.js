@@ -7,7 +7,7 @@ function TimeToLive({ HashTable = DefaultHashTable, defaultTTL } = {}) {
   const timeSeriesIndex = new HashTable();
   const timeIndexInterval = 5 * 60 * 1000; // milliseconds.
 
-  let lastRunGC = Date.now();
+  let lowestTimePartition = Date.now();
 
   this.add = (key, value, ttl = defaultTTL) => {
     if (!ttl)
