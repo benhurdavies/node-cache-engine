@@ -15,7 +15,7 @@ function LeastRecentlyUsed({
     if (this.size() >= size) handleOverflow();
     const payload = { key, value };
     linkList.addFirst(payload);
-    hashTable[hashTableProp.add](key, linkList.getFirst());
+    hashTable[hashTableProp.add](key, linkList.getFirstNode());
   };
 
   this.remove = key => {
@@ -50,7 +50,7 @@ function LeastRecentlyUsed({
   };
 
   function handleOverflow() {
-    const node = linkList.getLast();
+    const node = linkList.getLastNode();
     hashTable[hashTableProp.remove](node.value.key);
     linkList.remove(node);
   }
