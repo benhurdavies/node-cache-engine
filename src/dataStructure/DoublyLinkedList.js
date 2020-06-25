@@ -52,8 +52,8 @@ function DoublyLinkedList() {
   }
 
   this.size = () => length;
-  this.getFirst = () => first;
-  this.getLast = () => last;
+  this.getFirstNode = () => first;
+  this.getLastNode = () => last;
 
   function addFirstItem(value) {
     const node = createNode({ prev: null, next: null, value });
