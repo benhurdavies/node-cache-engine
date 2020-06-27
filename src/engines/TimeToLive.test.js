@@ -107,3 +107,29 @@ describe('TimeToLive', () => {
     expect(ttlCache.size()).toBe(1);
   });
 });
+
+describe('TimeToLive error test', () => {
+  it('should throw error ttl value is not given', () => {
+    const ttlCache = new TimeToLive();
+    expect(() => ttlCache.add('key1', 'value')).toThrow(
+      'Expected ttl value (should be positive integer). ' +
+        'you can have to mention it in add method or mention as defaultTTL at constructor',
+    );
+
+    expect(() => ttlCache.add('key1', 'value', 0)).toThrow(
+      'Expected ttl value (should be positive integer). ' +
+        'you can have to mention it in add method or mention as defaultTTL at constructor',
+    );
+
+    expect(() => ttlCache.add('key1', 'value', -1)).toThrow(
+      'Expected ttl value (should be positive integer). ' +
+        'you can have to mention it in add method or mention as defaultTTL at constructor',
+    );
+  });
+
+  it('should not throw error ttl value is not give but defined as default TTL', () => {
+    const ttlCache = new TimeToLive({ defaultTTL: 5000 });
+    ttlCache.add('key1', 'value');
+    expect(ttlCache.get('key1')).toBe('value');
+  });
+});

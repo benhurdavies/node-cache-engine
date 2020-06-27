@@ -10,7 +10,7 @@ function TimeToLive({ HashTable = DefaultHashTable, defaultTTL } = {}) {
   let lowestTimePartition = Date.now();
 
   this.add = (key, value, ttl = defaultTTL) => {
-    if (!ttl && Number.isInteger(ttl) && ttl > 0)
+    if (!ttl || !Number.isInteger(ttl) || ttl <= 0)
       throw Error(
         'Expected ttl value (should be positive integer). ' +
           'you can have to mention it in add method or mention as defaultTTL at constructor',
