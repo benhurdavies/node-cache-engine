@@ -14,7 +14,7 @@ function factory({
     case 'TTL':
       return new TTL({ HashTable, defaultTTL });
     default:
-      throw Error(`Engine : ${engine} is not implemented. Currently we have only 'LRU' engine.`);
+      throw Error(`Engine : ${engine} is not implemented. Engine options are 'LRU', 'TTL'`);
   }
 }
 
