@@ -132,12 +132,12 @@ function TimeToLive({ HashTable = DefaultHashTable, defaultTTL } = {}) {
 // time : unix timestamp milliseconds
 // interval : milliseconds (better to be factors of 60  (minutes))
 function getForwardTimeIndex({ time, interval }) {
-  const timeParts = parseInt(time / interval, 10);
+  const timeParts = (time / interval) | 0;
   return timeParts * interval + interval;
 }
 
 function getBackwardTimeIndex({ time, interval }) {
-  const timeParts = parseInt(time / interval, 10);
+  const timeParts = (time / interval) | 0;
   return timeParts * interval;
 }
 
