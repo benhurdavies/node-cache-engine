@@ -1,6 +1,11 @@
 import DefaultHashTable from '../dataStructure/HashTable';
 import DoublyLinkedList from '../dataStructure/DoublyLinkedList';
-import { add as hAdd, get as hGet, has as Hhas } from '../hashTableSymbol';
+import {
+  add as hAdd,
+  get as hGet,
+  has as hHas,
+  remove as hRemove,
+} from '../hashTableSymbol';
 
 function LeastFrequentlyUsed({
   size = Number.MAX_SAFE_INTEGER,
@@ -14,8 +19,8 @@ function LeastFrequentlyUsed({
 
   this.add = (key, value) => {
     const payload = { key, value };
-    const fItem = addToFrequency(payload);
-    hashTable[hAdd](key, fItem);
+    const fNode = addToFrequency(payload);
+    hashTable[hAdd](key, fNode);
     length++;
   };
 
@@ -23,50 +28,78 @@ function LeastFrequentlyUsed({
     let fNode = hashTable[hGet](key);
     if (!fNode) return undefined;
     fNode = incrementFrequency(fNode);
-    return fNode.payload.value;
+    return fNode.value.payload.value;
+  };
+
+  this.remove = key => {
+    if (!this.has(key)) return false;
+
+    const fNode = hashTable[hGet](key);
+    removeFromFrequency(fNode);
+    hashTable[hRemove](key);
+    length--;
+    return true;
+  };
+
+  this.has = key => {
+    return hashTable[hHas](key);
+  };
+
+  this.size = () => {
+    return length;
   };
 
   function addToFrequency(payload) {
     // frequency start with 1
     let first = frequencies.getFirstNode();
-    if (first.value !== 1) {
+    if (first?.value !== 1) {
       first = frequencies.addFirst(newFrequency(1));
     }
+
     const newItem = newFrequencyItem({ payload, parent: first });
-    first.items.addFirst(newItem);
-    return newItem;
+    return first.value.items.addFirst(newItem);
   }
 
   function incrementFrequency(fNode) {
-    const currentFrequencyNode = fNode.parent;
+    const currentFrequencyNode = fNode.value.parent;
     let nextFrequencyNode = currentFrequencyNode.next;
-    const nextFrequency = currentFrequencyNode.value + 1;
+    const nextFrequency = currentFrequencyNode.value.value + 1;
 
-    if (nextFrequency !== nextFrequencyNode.value) {
-      nextFrequencyNode = currentFrequencyNode.addNext(
+    if (nextFrequency !== nextFrequencyNode?.value?.value) {
+      nextFrequencyNode = frequencies.addNext(
+        currentFrequencyNode,
         newFrequency(nextFrequency),
       );
     }
 
-    const newItem = moveItemFromFrequency({
+    const newItemNode = moveItemFromFrequency({
       source: currentFrequencyNode,
-      traget: nextFrequency,
+      traget: nextFrequencyNode,
       item: fNode,
     });
-    hashTable[hAdd](key, newItem);
-    return newItem;
+    hashTable[hAdd](fNode.value.payload.key, newItemNode);
+    return newItemNode;
   }
 
   function moveItemFromFrequency({ source, traget, item }) {
-    const { payload } = item;
-    source.items.remove(item);
-    if (source.items.size() === 0) {
+    const { payload } = item.value;
+    const { items } = source.value;
+    items.remove(item);
+    if (items.size() === 0) {
       frequencies.remove(source);
     }
 
     const newItem = newFrequencyItem({ payload, parent: traget });
-    traget.items.addFirst(newItem);
-    return newItem;
+    return traget.value.items.addFirst(newItem);
+  }
+
+  function removeFromFrequency(fNode) {
+    const { parent } = fNode.value;
+    const { items } = parent.value;
+    items.remove(fNode);
+    if (items.size() === 0) {
+      frequencies.remove(parent);
+    }
   }
 
   function newFrequencyItem({ payload, parent }) {
