@@ -12,6 +12,7 @@ function DoublyLinkedList() {
       first = node;
     }
     length++;
+    return first;
   };
 
   this.moveToFirst = node => {
@@ -33,6 +34,25 @@ function DoublyLinkedList() {
       last = node;
     }
     length++;
+    return last;
+  };
+
+  this.addNext = (node, value) => {
+    if (node === last) return this.addLast(value);
+    const newNode = createNode({ prev: node, next: node.next, value });
+    node.next = newNode;
+    newNode.next.prev = newNode;
+    length++;
+    return newNode;
+  };
+
+  this.addPrev = (node, value) => {
+    if (node === first) return this.addFirst(value);
+    const newNode = createNode({ prev: node.prev, next: node, value });
+    node.prev = newNode;
+    newNode.prev.next = newNode;
+    length++;
+    return newNode;
   };
 
   this.remove = node => {
