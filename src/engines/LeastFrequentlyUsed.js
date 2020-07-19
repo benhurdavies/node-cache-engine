@@ -14,10 +14,13 @@ function LeastFrequentlyUsed({
   if (size <= 0) throw Error('LRU size specified should be greater than zero');
 
   const hashTable = new HashTable();
-  const frequencies = new DoublyLinkedList(); // frequency object {payload, items}
+  const frequencies = new DoublyLinkedList(); // frequency object {value, items}
   let length = 0;
 
   this.add = (key, value) => {
+    if (this.size() >= size) {
+      handleOverflow();
+    }
     const payload = { key, value };
     const fNode = addToFrequency(payload);
     hashTable[hAdd](key, fNode);
@@ -25,10 +28,10 @@ function LeastFrequentlyUsed({
   };
 
   this.get = key => {
-    let fNode = hashTable[hGet](key);
-    if (!fNode) return undefined;
-    fNode = incrementFrequency(fNode);
-    return fNode.value.payload.value;
+    let fItemNode = hashTable[hGet](key);
+    if (!fItemNode) return undefined;
+    fItemNode = incrementFrequency(fItemNode);
+    return fItemNode.value.payload.value;
   };
 
   this.remove = key => {
@@ -52,7 +55,7 @@ function LeastFrequentlyUsed({
   function addToFrequency(payload) {
     // frequency start with 1
     let first = frequencies.getFirstNode();
-    if (first?.value !== 1) {
+    if (first?.value?.value !== 1) {
       first = frequencies.addFirst(newFrequency(1));
     }
 
@@ -60,8 +63,8 @@ function LeastFrequentlyUsed({
     return first.value.items.addFirst(newItem);
   }
 
-  function incrementFrequency(fNode) {
-    const currentFrequencyNode = fNode.value.parent;
+  function incrementFrequency(fItemNode) {
+    const currentFrequencyNode = fItemNode.value.parent;
     let nextFrequencyNode = currentFrequencyNode.next;
     const nextFrequency = currentFrequencyNode.value.value + 1;
 
@@ -75,9 +78,9 @@ function LeastFrequentlyUsed({
     const newItemNode = moveItemFromFrequency({
       source: currentFrequencyNode,
       traget: nextFrequencyNode,
-      item: fNode,
+      item: fItemNode,
     });
-    hashTable[hAdd](fNode.value.payload.key, newItemNode);
+    hashTable[hAdd](fItemNode.value.payload.key, newItemNode);
     return newItemNode;
   }
 
@@ -93,10 +96,10 @@ function LeastFrequentlyUsed({
     return traget.value.items.addFirst(newItem);
   }
 
-  function removeFromFrequency(fNode) {
-    const { parent } = fNode.value;
+  function removeFromFrequency(fItemNode) {
+    const { parent } = fItemNode.value;
     const { items } = parent.value;
-    items.remove(fNode);
+    items.remove(fItemNode);
     if (items.size() === 0) {
       frequencies.remove(parent);
     }
@@ -109,6 +112,12 @@ function LeastFrequentlyUsed({
   function newFrequency(value) {
     return { value, items: new DoublyLinkedList() };
   }
+
+  const handleOverflow = () => {
+    const leastFrequencyNode = frequencies.getFirstNode();
+    const fItemNode = leastFrequencyNode.value.items.getLastNode();
+    this.remove(fItemNode.value.payload.key);
+  };
 }
 
 export default LeastFrequentlyUsed;
