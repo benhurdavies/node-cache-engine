@@ -1,6 +1,6 @@
 {
   "name": "node-cache-engine",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "High performing cache library (with cache replacement) for browser and node",
   "source": "src/main.js",
   "main": "dist/main.js",
