@@ -40,6 +40,8 @@ function DoublyLinkedList() {
       return;
     }
     remove(node);
+    node.prev = null;
+    node.next = null;
     length--;
   };
 
