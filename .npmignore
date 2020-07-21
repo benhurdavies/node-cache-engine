@@ -4,6 +4,6 @@
 report
 tmp/
 .env
-dist
 .cache
 .github
+docs
