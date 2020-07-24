@@ -42,7 +42,12 @@ describe('DoublyLinkedList', () => {
     expect(list.getFirstNode().value).toBe(9);
     expect(list.getLastNode().value).toBe(5);
 
-    list.remove(list.getFirstNode());
+    let first = list.getFirstNode();
+    list.remove(first);
+    expect({ prev: first.prev, next: first.next }).toEqual({
+      prev: null,
+      next: null,
+    });
     expect(list.getFirstNode().value).toBe(5);
     expect(list.getLastNode().value).toBe(5);
 
