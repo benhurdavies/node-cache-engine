@@ -1,5 +1,6 @@
 import DefaultHashTable from '../dataStructure/HashTable';
 import DoublyLinkedList from '../dataStructure/DoublyLinkedList';
+import { isPositiveInteger } from '../helper';
 import {
   add as hAdd,
   get as hGet,
@@ -11,7 +12,8 @@ function LeastFrequentlyUsed({
   size = Number.MAX_SAFE_INTEGER,
   HashTable = DefaultHashTable,
 }) {
-  if (size <= 0) throw Error('LRU size specified should be greater than zero');
+  if (!isPositiveInteger(size))
+    throw Error('LFU size specified should be greater than zero');
 
   const hashTable = new HashTable();
   const frequencies = new DoublyLinkedList(); // frequency object {value, items}

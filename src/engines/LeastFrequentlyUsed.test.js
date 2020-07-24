@@ -1,8 +1,8 @@
-import LeastFrequentlyUsed from './LeastFrequentlyUsed';
+import LFU from './LeastFrequentlyUsed';
 
 describe('LeastFrequentlyUsed (LFU)', () => {
   it('should have basic methods', () => {
-    const lfu = new LeastFrequentlyUsed({ size: 10 });
+    const lfu = new LFU({ size: 10 });
     lfu.add('apple', 2);
     lfu.add('mango', 5);
     expect(lfu.get('apple')).toEqual(2);
@@ -20,7 +20,7 @@ describe('LeastFrequentlyUsed (LFU)', () => {
   });
 
   it('should remove lest frequently used item if overflow the size', () => {
-    const lfu = new LeastFrequentlyUsed({ size: 5 });
+    const lfu = new LFU({ size: 5 });
     lfu.add('A', 1);
     lfu.add('B', 2);
     lfu.add('C', 3);
@@ -55,5 +55,11 @@ describe('LeastFrequentlyUsed (LFU)', () => {
     lfu.add('K', 10);
     expect(lfu.get('B')).toBe(undefined);
     expect(lfu.size()).toBe(5);
+  });
+
+  it('should throw error when size is less than 1', () => {
+    expect(() => new LFU({ size: 0 })).toThrow(
+      'LFU size specified should be greater than zero',
+    );
   });
 });

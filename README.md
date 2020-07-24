@@ -81,5 +81,5 @@ To implement custom hashTable you have to use methods with symbols name provided
 
 #### Next?
 
-- TTL engine.
+- TTL engine
 - TTL combining with LRU engine
