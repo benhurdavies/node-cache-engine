@@ -70,6 +70,8 @@ function LeastFrequentlyUsed({
     let nextFrequencyNode = currentFrequencyNode.next;
     const nextFrequency = currentFrequencyNode.value.value + 1;
 
+    if (!Number.isSafeInteger(nextFrequency)) return fItemNode;
+
     if (nextFrequency !== nextFrequencyNode?.value?.value) {
       nextFrequencyNode = frequencies.addNext(
         currentFrequencyNode,
