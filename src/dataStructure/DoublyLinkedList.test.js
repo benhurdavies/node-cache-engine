@@ -77,4 +77,47 @@ describe('DoublyLinkedList', () => {
     list.addFirst(last.value);
     expect(list.getLastNode().prev.value).toBe('A');
   });
+
+  it('should able add item in next position of node', () => {
+    const list = new DoublyLinkedList();
+    const one = list.addLast(1);
+    const two = list.addLast(2);
+    const three = list.addNext(one, 3);
+
+    expect(list.toArray()).toEqual([1, 3, 2]);
+
+    list.addNext(two, 5);
+    expect(list.toArray()).toEqual([1, 3, 2, 5]);
+
+    list.addNext(three, 4);
+    expect(list.toArray()).toEqual([1, 3, 4, 2, 5]);
+    expect(list.size()).toBe(5);
+  });
+
+  it('should able add item in prev position of node', () => {
+    const list = new DoublyLinkedList();
+    const one = list.addLast(1);
+    const two = list.addLast(2);
+    const zero = list.addPrev(one, 0);
+
+    expect(list.toArray()).toEqual([0, 1, 2]);
+
+    const three = list.addPrev(two, 3);
+    expect(list.toArray()).toEqual([0, 1, 3, 2]);
+
+    list.addPrev(three, 4);
+    expect(list.toArray()).toEqual([0, 1, 4, 3, 2]);
+    expect(list.size()).toBe(5);
+  });
+
+  it('should able to add next and prev prosition of node', () => {
+    const list = new DoublyLinkedList();
+    const one = list.addLast(1);
+    list.addLast(2);
+
+    const five = list.addNext(one, 5);
+    list.addPrev(five, 6);
+
+    expect(list.toArray()).toEqual([1, 6, 5, 2]);
+  });
 });
