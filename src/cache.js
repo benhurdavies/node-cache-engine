@@ -7,14 +7,14 @@ function factory({
   engine = 'LRU',
   HashTable = DefaultHashTable,
 } = {}) {
-  switch (engine) {
+  switch (engine.toLocaleUpperCase()) {
     case 'LRU':
       return new LRU({ size, HashTable });
     case 'LFU':
       return new LFU({ size, HashTable });
     default:
       throw Error(
-        `Engine : ${engine} is not implemented. Currently we have only 'LRU' engine.`,
+        `Engine : ${engine} is not implemented. Currently we have only 'LRU' and 'LFU' engine.`,
       );
   }
 }
