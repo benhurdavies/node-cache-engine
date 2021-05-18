@@ -65,6 +65,12 @@ function DoublyLinkedList() {
     length--;
   };
 
+  this.clearAll = () => {
+    first = null;
+    last = null;
+    length = 0;
+  };
+
   function remove({ prev, next }) {
     if (prev) prev.next = next;
     else first = next;

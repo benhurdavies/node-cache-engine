@@ -31,6 +31,19 @@ describe('LeastRecentlyUsed (LRU)', () => {
     expect(lru.has('C')).toBe(false);
   });
 
+  it('should have clear all method', () => {
+    const lru = new LRU({ size: 3 });
+    lru.add('A', 'A');
+    lru.add('B', 'B');
+    expect(lru.size()).toBe(2);
+
+    lru.clearAll();
+    expect(lru.size()).toBe(0);
+
+    lru.add('C', 'C');
+    expect(lru.size()).toBe(1);
+  });
+
   it('should throw error when size is less than 1', () => {
     expect(() => new LRU({ size: 0 })).toThrow(
       'LRU size specified should be greater than zero',
