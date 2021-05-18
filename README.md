@@ -72,7 +72,7 @@ const cache = createCache({
   </tr>
 </table>
 
-### Methods available on Table engines
+### Methods available on cache engines
 
 <table>
   <tr>
