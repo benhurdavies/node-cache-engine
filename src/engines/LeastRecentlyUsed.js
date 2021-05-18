@@ -45,6 +45,11 @@ function LeastRecentlyUsed({
     return linkList.size();
   };
 
+  this.clearAll = () =>{
+    hashTable[hashTableProp.clear]();
+    linkList.clearAll();
+  }
+
   this.toArray = () => {
     return linkList.toArray();
   };

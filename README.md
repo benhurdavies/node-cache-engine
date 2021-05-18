@@ -72,6 +72,51 @@ const cache = createCache({
   </tr>
 </table>
 
+### Methods available on cache engines
+
+<table>
+  <tr>
+    <th>Methods</th>
+    <th>LRU</th>
+    <th>LFU</th>
+  </tr>
+  <tr>
+    <td>add</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>get</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>has</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>remove</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>size</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>clearAll</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>toArray</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+</table>
+
 ### Creating Custom HashTable
 
 When and Why you should create custom hash table?  

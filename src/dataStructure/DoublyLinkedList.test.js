@@ -120,4 +120,20 @@ describe('DoublyLinkedList', () => {
 
     expect(list.toArray()).toEqual([1, 6, 5, 2]);
   });
+
+  it('should able to clearAll nodes', () => {
+    const list = new DoublyLinkedList();
+    list.addLast(1);
+    list.addLast(2);
+    expect(list.size()).toBe(2);
+
+    list.clearAll();
+    expect(list.size()).toBe(0);
+    expect(list.toArray()).toEqual([]);
+
+    list.addLast(1);
+    list.addLast(2);
+    list.addFirst(-5);
+    expect(list.toArray()).toEqual([-5, 1, 2]);
+  });
 });
