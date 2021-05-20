@@ -123,8 +123,3 @@ When and Why you should create custom hash table?
 The default hash table implemented with `Map`. If you want much more performance than default you can implement your own (like node wrapped c++ hash table). I think 1 to 5 million cache entry default hash table is fine if your use case is more than this go for custom hash table.
 
 To implement custom hashTable you have to use methods with symbols name provided from the package. [example](src/featureTest/customHashTable.test.js)
-
-#### Next?
-
-- TTL engine
-- TTL combining with LRU engine
