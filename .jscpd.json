@@ -1,0 +1,13 @@
+{
+  "threshold": 0,
+  "reporters": ["consoleFull"],
+  "ignore": [
+    "node_modules/**",
+    "build/**",
+    "**/*.test.[tj]s",
+    "coverage/**",
+    "**/package.json",
+    ".idea/**"
+  ],
+  "absolute": true
+}

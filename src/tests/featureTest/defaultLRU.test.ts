@@ -1,4 +1,5 @@
-import cacheEngine from '../main';
+import { describe, it, expect } from 'vitest';
+import cacheEngine from '../../main.js';
 
 describe('cache engine default lru', () => {
   it('should test all features', () => {

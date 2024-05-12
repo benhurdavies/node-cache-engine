@@ -128,3 +128,8 @@ To implement custom hashTable you have to use methods with symbols name provided
 
 - TTL engine
 - TTL combining with LRU engine
+
+## Contribute
+
+Contributions to this project are always welcome.  
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for a How-to.

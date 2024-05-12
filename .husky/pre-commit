@@ -1,0 +1,9 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+case $- in
+  *i*) echo This shell is already interactive;;
+  *) exec < /dev/tty && echo This shell is now interactive;;
+esac
+
+npm test && npm run lint && npm run jscpd && npm run build
