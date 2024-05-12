@@ -1,4 +1,5 @@
-import LFU from './LeastFrequentlyUsed';
+import { describe, it, expect } from 'vitest';
+import { LFU } from './LeastFrequentlyUsed.js';
 
 describe('LeastFrequentlyUsed (LFU)', () => {
   it('should have basic methods', () => {
@@ -58,8 +59,6 @@ describe('LeastFrequentlyUsed (LFU)', () => {
   });
 
   it('should throw error when size is less than 1', () => {
-    expect(() => new LFU({ size: 0 })).toThrow(
-      'LFU size specified should be greater than zero',
-    );
+    expect(() => new LFU({ size: 0 })).toThrow('LFU size specified should be greater than zero');
   });
 });

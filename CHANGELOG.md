@@ -1,0 +1,26 @@
+# Changelog
+
+All notable changes to this project will be documented in this file
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+
+## [Unreleased]
+
+### Added
+
+- Added CHANGELOG
+- Added CONTRIBUTING
+
+### Changed
+
+- Refactored to TypeScript
+
+## [1.2.0] - 2021-05-18
+
+### Added
+
+- JS version of the node-cache-engine
+
+[unreleased]: https://github.com/benhurdavies/node-cache-engine/compare/v1.2.0...master
+[1.2.0]: https://github.com/benhurdavies/node-cache-engine/tree/v1.2.0

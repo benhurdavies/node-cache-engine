@@ -1,4 +1,7 @@
-import DoublyLinkedList from './DoublyLinkedList';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+import { describe, it, expect } from 'vitest';
+import { DoublyLinkedList } from './DoublyLinkedList.js';
 
 describe('DoublyLinkedList', () => {
   it('should add items with same order', () => {
@@ -10,13 +13,13 @@ describe('DoublyLinkedList', () => {
 
   it('should able to remove node', () => {
     let removeItem = null;
-    const list = new DoublyLinkedList();
+    const list = new DoublyLinkedList<number>();
     list.addFirst(1);
-    removeItem = list.getFirstNode();
+    removeItem = list.getFirstNode()!;
     list.addFirst(2);
     list.addLast(5);
     expect(list.toArray()).toEqual([2, 1, 5]);
-
+    expect(removeItem).not.toBe(null);
     list.remove(removeItem);
     expect(list.toArray()).toEqual([2, 5]);
   });
@@ -27,31 +30,32 @@ describe('DoublyLinkedList', () => {
     expect(list.getLastNode()).toBe(null);
 
     list.addFirst(1);
-    expect(list.getFirstNode().value).toBe(1);
-    expect(list.getLastNode().value).toBe(1);
+    expect(list.getFirstNode()!.value).toBe(1);
+    expect(list.getLastNode()!.value).toBe(1);
 
     list.addFirst(5);
-    expect(list.getFirstNode().value).toBe(5);
-    expect(list.getLastNode().value).toBe(1);
+    expect(list.getFirstNode()!.value).toBe(5);
+    expect(list.getLastNode()!.value).toBe(1);
 
     list.addFirst(9);
-    expect(list.getFirstNode().value).toBe(9);
-    expect(list.getLastNode().value).toBe(1);
+    expect(list.getFirstNode()!.value).toBe(9);
+    expect(list.getLastNode()!.value).toBe(1);
 
-    list.remove(list.getLastNode());
-    expect(list.getFirstNode().value).toBe(9);
-    expect(list.getLastNode().value).toBe(5);
+    list.remove(list.getLastNode()!);
+    expect(list.getFirstNode()!.value).toBe(9);
+    expect(list.getLastNode()!.value).toBe(5);
 
-    let first = list.getFirstNode();
+    const first = list.getFirstNode()!;
+    expect(first).not.toBe(null);
     list.remove(first);
-    expect({ prev: first.prev, next: first.next }).toEqual({
+    expect({ prev: first.prev!, next: first.next! }).toEqual({
       prev: null,
       next: null,
     });
-    expect(list.getFirstNode().value).toBe(5);
-    expect(list.getLastNode().value).toBe(5);
+    expect(list.getFirstNode()!.value).toBe(5);
+    expect(list.getLastNode()!.value).toBe(5);
 
-    list.remove(list.getFirstNode());
+    list.remove(list.getFirstNode()!);
     expect(list.getFirstNode()).toBe(null);
     expect(list.getLastNode()).toBe(null);
   });
@@ -62,20 +66,20 @@ describe('DoublyLinkedList', () => {
     list.addFirst('B');
     list.addFirst('C');
 
-    const node = list.getLastNode();
+    const node = list.getLastNode()!;
     list.remove(node);
     expect(list.toArray()).toEqual(['C', 'B']);
 
     list.addFirst(node.value);
     expect(list.toArray()).toEqual(['A', 'C', 'B']);
 
-    const last = list.getLastNode();
-    expect(last.prev.value).toBe('C');
-    expect(last.prev.prev.value).toBe('A');
+    const last = list.getLastNode()!;
+    expect(last.prev!.value).toBe('C');
+    expect(last.prev!.prev!.value).toBe('A');
 
     list.remove(last);
     list.addFirst(last.value);
-    expect(list.getLastNode().prev.value).toBe('A');
+    expect(list.getLastNode()!.prev!.value).toBe('A');
   });
 
   it('should able add item in next position of node', () => {
@@ -98,7 +102,7 @@ describe('DoublyLinkedList', () => {
     const list = new DoublyLinkedList();
     const one = list.addLast(1);
     const two = list.addLast(2);
-    const zero = list.addPrev(one, 0);
+    list.addPrev(one, 0);
 
     expect(list.toArray()).toEqual([0, 1, 2]);
 

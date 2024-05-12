@@ -1,0 +1,41 @@
+{
+  "git": {
+    "requireUpstream": true,
+    "requireCleanWorkingDir": true,
+    "commit": true,
+    "commitMessage": "${version}",
+    "commitArgs": ["--no-verify"],
+    "push": true,
+    "pushArgs": ["--no-verify", "--follow-tags"],
+    "tag": true,
+    "tagName": "v${version}",
+    "tagAnnotation": "v${version}"
+  },
+  "npm": {
+    "publish": false
+  },
+  "github": {
+    "release": true
+  },
+  "gitlab": {
+    "release": false
+  },
+  "hooks": {
+    "before:bump": ["npm run validateChangelog", "npm ci", "npm test", "npm run lint", "npm run jscpd", "npm run build"]
+  },
+  "plugins": {
+    "@release-it/keep-a-changelog": {
+      "filename": "CHANGELOG.md",
+      "strictLatest": true,
+      "addUnreleased": true,
+      "addVersionUrl": true,
+      "head": "master",
+      "versionUrlFormats": {
+        "repositoryUrl": "https://{host}/{repository}",
+        "unreleasedUrl": "{repositoryUrl}/compare/{tagName}...{head}",
+        "versionUrl": "{repositoryUrl}/compare/{previousTag}...{tagName}",
+        "firstVersionUrl": "{repositoryUrl}/tree/{tagName}"
+      }
+    }
+  }
+}

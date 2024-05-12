@@ -1,4 +1,5 @@
-import LRU from './LeastRecentlyUsed';
+import { describe, it, expect } from 'vitest';
+import { LRU } from './LeastRecentlyUsed.js';
 
 describe('LeastRecentlyUsed (LRU)', () => {
   it('should possible to add and remove from the cache', () => {
@@ -45,8 +46,6 @@ describe('LeastRecentlyUsed (LRU)', () => {
   });
 
   it('should throw error when size is less than 1', () => {
-    expect(() => new LRU({ size: 0 })).toThrow(
-      'LRU size specified should be greater than zero',
-    );
+    expect(() => new LRU({ size: 0 })).toThrow('LRU size specified should be greater than zero');
   });
 });
