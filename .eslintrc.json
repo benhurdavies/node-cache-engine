@@ -30,12 +30,7 @@
     "no-underscore-dangle": "error",
     "import/extensions": ["error", "always", { "ignorePackages": true }],
     "import/prefer-default-export": "off",
-    "@typescript-eslint/no-use-before-define": [
-      "error",
-      {
-        "functions": false // functions are hoisted
-      }
-    ],
+    "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "off",
     "@typescript-eslint/prefer-readonly": "error",
