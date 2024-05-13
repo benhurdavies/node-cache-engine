@@ -1,5 +1,5 @@
 import { describe, it, expect, vitest } from 'vitest';
-import cacheEngine from '../../main.js';
+import cacheEngine from '../../index.js';
 import type { HashTable } from '../../dataStructure/HashTable.js';
 
 describe('cache engine lru with custom hash table', () => {

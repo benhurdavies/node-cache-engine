@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed entry point file name
+
 ## [2.0.1] - 2024-05-12
 
 ### Changed
+
 - Update node version to 18 in npmpublish.yml
 
 ## [2.0.0] - 2024-05-12
