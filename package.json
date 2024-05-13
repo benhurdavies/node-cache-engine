@@ -1,6 +1,6 @@
 {
   "name": "node-cache-engine",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "High performing cache library (with cache replacement) for browser and node",
   "keywords": [
     "node",
