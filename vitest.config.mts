@@ -11,5 +11,8 @@ export default defineConfig({
     outputFile: './junit.xml',
     exclude: ['node_modules', 'build', '.idea', '.git', '.cache'],
     passWithNoTests: true,
+    chaiConfig: {
+      truncateThreshold: 1000,
+    },
   },
 });
