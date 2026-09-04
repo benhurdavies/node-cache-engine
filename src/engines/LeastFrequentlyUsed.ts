@@ -5,7 +5,7 @@ import {
   DoublyLinkedList,
   MapHashTable,
 } from '../dataStructure/index.js';
-import { isPositiveInteger } from '../utils/helper.js';
+import { isPositiveInteger, type Ttl } from '../utils/helper.js';
 import type { Cache } from '../types/Cache.js';
 
 export type LfuPayload<Value, Key = string> = {
@@ -48,7 +48,8 @@ export class LFU<Value, Key = string> implements Cache<Value, Key> {
     this.#size = size;
   }
 
-  public add(key: Key, value: Value): void {
+  public add(key: Key, value: Value, options?: { ttl?: Ttl }): void {
+    if (options?.ttl !== undefined) throw new Error('TTL is supported by the LRU engine only');
     if (this.size() >= this.#size) {
       this.#handleOverflow();
     }

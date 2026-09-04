@@ -128,40 +128,28 @@ To implement custom hashTable you have to use methods with symbols name provided
 
 ### Time to live (TTL)
 
-TTL is supported by the **LRU engine only**. Passing `ttl` while creating an LFU cache
-(`createCache({ engine: 'LFU', ttl: 1000 })`) throws `Error('TTL is supported by the LRU engine only')`.
+TTL is supported by the **LRU engine only**; passing a `ttl` to the LFU engine throws.
 
 ```javascript
 import { createCache } from 'node-cache-engine';
 
-// Cache-wide TTL: every entry expires 60s after it was last added.
-const cache = createCache({ size: 100, ttl: 60_000 });
+const cache = createCache({ size: 100, ttl: 60_000 }); // every entry expires 60 s after it was added
 
-cache.add('key', 'value'); // expires in 60s (the cache-wide ttl)
-cache.add('other', 'value', { ttl: 5_000 }); // this entry overrides the cache-wide ttl and expires in 5s instead
-
-cache.get('key'); // resets nothing - reading does not extend the ttl
-cache.add('key', 'new value'); // re-adding an existing key resets it to a full, fresh ttl window
+cache.add('key', 'value'); // expires in 60 s
+cache.add('other', 'value', { ttl: 5_000 }); // a per-entry ttl overrides the cache-wide one
+cache.get('key'); // reading does not extend the ttl
+cache.add('key', 'new value'); // re-adding a key starts a fresh ttl window
 ```
 
-- `ttl` (milliseconds) set on `createCache`/`new LRU(...)` applies to every entry added without its own `ttl`.
-  Omitted or `undefined` means entries never expire.
-- `add(key, value, { ttl })` accepts an optional per-entry `ttl` that overrides the cache-wide one for that
-  entry only (shorter or longer). It is validated the same way, and an invalid value throws directly from `add`.
-- A `ttl` is a positive integer number of milliseconds (`Date.now()` is integral, so a fraction buys nothing).
-  Anything else - `0`, a negative or fractional number, `NaN`, `Infinity`, a non-number - throws
-  `Error('ttl must be a positive integer (milliseconds)')` from `createCache`, `new LRU(...)`, and `add(...)`.
-  The `Ttl` and `PositiveInteger` types are exported for callers that want to name the contract.
-- Expiry is **lazy**: an expired entry is only actually removed the next time it is read via `get`/`has` (which
-  then report it as absent), or when it's evicted by overflow. `toArray()` filters out expired entries, so it
-  never returns a stale value.
-- Because of lazy expiry, `size()` stays O(1) but **may overcount** entries that have expired but have not yet
-  been touched by `get`/`has`/overflow eviction - it doesn't proactively scan for expired entries.
+- A `ttl` is a positive integer of milliseconds; anything else throws from `createCache`, `new LRU(...)` and
+  `add(...)`. Omit it and entries never expire. The `Ttl` type is exported.
+- Expiry is **lazy**: `get` and `has` remove an expired entry and report it absent, and `toArray()` skips expired
+  entries. Nothing scans for expired entries, so `size()` stays O(1) but may still count entries that have
+  expired and not been touched since.
 
 #### Next?
 
-- TTL engine (a standalone eviction policy based purely on expiry, independent of LRU/LFU recency or frequency
-  tracking - distinct from TTL-as-an-option-on-LRU above)
+- TTL engine (eviction purely by expiry, independent of LRU/LFU)
 
 ## Contribute
 

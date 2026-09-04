@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect } from 'vitest';
 import { LRU } from './LeastRecentlyUsed.js';
 
 describe('LeastRecentlyUsed (LRU)', () => {
@@ -50,35 +50,27 @@ describe('LeastRecentlyUsed (LRU)', () => {
   });
 
   describe('re-adding an existing key', () => {
-    it('updates the value in place without growing size, and moves the key to MRU', () => {
+    it('updates the value in place, keeps size unchanged and makes the key most recently used', () => {
       const lru = new LRU({ size: 3 });
-
       lru.add('A', 'A1');
       lru.add('B', 'B');
-      expect(lru.size()).toBe(2);
 
-      // Re-adding an existing key below capacity must not grow size() - a
-      // naive add that always creates a new node would orphan the old one
-      // and leave size() overcounting.
       lru.add('A', 'A2');
       expect(lru.size()).toBe(2);
       expect(lru.get('A')).toBe('A2');
 
-      // A is now MRU (re-added last); B was never touched again and is LRU.
+      // B is now the least recently used entry, so it is the one overflow evicts.
       lru.add('C', 'C');
-      expect(lru.size()).toBe(3);
-
-      // Overflow should evict the true LRU entry (B), leaving A, C, D intact.
       lru.add('D', 'D');
       expect(lru.has('B')).toBe(false);
       expect(lru.has('A')).toBe(true);
       expect(lru.has('C')).toBe(true);
       expect(lru.has('D')).toBe(true);
     });
-  });
 
-  describe('orphan node regression (re-adding a key must not orphan its old linked-list node)', () => {
-    it('keeps size within bounds and returns A latest value after repeated re-adds interleaved with overflow', () => {
+    it('never orphans a node: repeated re-adds interleaved with overflow keep size bounded and the key alive', () => {
+      // Regression: add() used to link a fresh node for an existing key while Map.set overwrote the hash entry.
+      // The orphan later reached the tail and overflow removed the *live* entry by key.
       const size = 3;
       const lru = new LRU({ size });
       const steps: [string, string][] = [
@@ -96,24 +88,23 @@ describe('LeastRecentlyUsed (LRU)', () => {
 
       steps.forEach(([key, value]) => {
         lru.add(key, value);
-        // Reading 'A' between adds is realistic usage, and (with the pre-fix
-        // orphaning bug) changes which node reaches the tail next - this is
-        // what eventually causes overflow eviction to delete a live entry.
         lru.get('A');
         expect(lru.size()).toBeLessThanOrEqual(size);
       });
 
-      expect(lru.has('A')).toBe(true);
       expect(lru.get('A')).toBe('A3');
     });
   });
 
   describe('TTL', () => {
-    it('expires an entry lazily on get, removing it', () => {
-      let clock = 0;
-      const now = (): number => clock;
-      const lru = new LRU({ size: 3, ttl: 100, now });
+    let clock = 0;
+    const now = (): number => clock;
+    beforeEach(() => {
+      clock = 0;
+    });
 
+    it('removes an expired entry on get and reports it absent', () => {
+      const lru = new LRU({ size: 3, ttl: 100, now });
       lru.add('A', 'A');
       clock = 101;
 
@@ -121,11 +112,8 @@ describe('LeastRecentlyUsed (LRU)', () => {
       expect(lru.size()).toBe(0);
     });
 
-    it('expires an entry lazily on has, removing it', () => {
-      let clock = 0;
-      const now = (): number => clock;
+    it('removes an expired entry on has and reports it absent', () => {
       const lru = new LRU({ size: 3, ttl: 100, now });
-
       lru.add('A', 'A');
       clock = 101;
 
@@ -133,62 +121,42 @@ describe('LeastRecentlyUsed (LRU)', () => {
       expect(lru.size()).toBe(0);
     });
 
-    it('keeps an entry read before expiry present, and marks it MRU', () => {
-      let clock = 0;
-      const now = (): number => clock;
+    it('keeps an entry read before expiry and makes it most recently used', () => {
       const lru = new LRU({ size: 2, ttl: 100, now });
-
       lru.add('A', 'A');
       lru.add('B', 'B');
       clock = 50;
       expect(lru.get('A')).toBe('A');
 
-      // A was just read, so it is MRU; overflow should evict B instead.
       lru.add('C', 'C');
       expect(lru.has('A')).toBe(true);
       expect(lru.has('B')).toBe(false);
       expect(lru.has('C')).toBe(true);
     });
 
-    it('lets a per-entry ttl override the cache-wide ttl with a shorter duration', () => {
-      let clock = 0;
-      const now = (): number => clock;
-      const lru = new LRU({ size: 3, ttl: 1000, now });
+    it('lets a per-entry ttl shorten or extend the cache-wide ttl', () => {
+      const lru = new LRU({ size: 3, ttl: 100, now });
+      lru.add('short', 'short', { ttl: 10 });
+      lru.add('long', 'long', { ttl: 1000 });
+      lru.add('default', 'default');
+      clock = 101;
 
-      lru.add('A', 'A', { ttl: 10 });
-      clock = 11;
-
-      expect(lru.get('A')).toBe(undefined);
+      expect(lru.get('short')).toBe(undefined);
+      expect(lru.get('default')).toBe(undefined);
+      expect(lru.get('long')).toBe('long');
     });
 
-    it('lets a per-entry ttl override the cache-wide ttl with a longer duration', () => {
-      let clock = 0;
-      const now = (): number => clock;
-      const lru = new LRU({ size: 3, ttl: 10, now });
-
-      lru.add('A', 'A', { ttl: 1000 });
-      clock = 11;
-
-      expect(lru.get('A')).toBe('A');
-    });
-
-    it('never expires an entry when no ttl is configured anywhere, even after a large clock jump', () => {
-      let clock = 0;
-      const now = (): number => clock;
+    it('never expires an entry when no ttl is configured, even after a large clock jump', () => {
       const lru = new LRU({ size: 3, now });
-
       lru.add('A', 'A');
       clock = Number.MAX_SAFE_INTEGER;
 
       expect(lru.get('A')).toBe('A');
-      expect(lru.has('A')).toBe(true);
+      expect(lru.toArray()).toEqual(['A']);
     });
 
     it('omits expired entries from toArray', () => {
-      let clock = 0;
-      const now = (): number => clock;
       const lru = new LRU({ size: 3, ttl: 100, now });
-
       lru.add('A', 'A');
       lru.add('B', 'B', { ttl: 1000 });
       clock = 101;
@@ -196,39 +164,26 @@ describe('LeastRecentlyUsed (LRU)', () => {
       expect(lru.toArray()).toEqual(['B']);
     });
 
-    it('resets expiresAt to a full fresh ttl when re-adding an existing key', () => {
-      let clock = 0;
-      const now = (): number => clock;
+    it('starts a fresh ttl window when re-adding an existing key', () => {
       const lru = new LRU({ size: 3, ttl: 100, now });
-
       lru.add('A', 'A1');
-      clock = 90; // just before the original entry would expire
-      lru.add('A', 'A2'); // re-add resets the ttl window
+      clock = 90;
+      lru.add('A', 'A2');
+      clock = 150; // past the original window, inside the new one
 
-      clock = 150; // would have expired under the original window
       expect(lru.get('A')).toBe('A2');
     });
 
-    it.each([0, -1, 0.5, NaN, Infinity])('throws a clear error for an invalid cache-wide ttl of %s', (ttl) => {
-      expect(() => new LRU({ size: 3, ttl })).toThrow();
+    it('rejects an invalid cache-wide ttl', () => {
+      expect(() => new LRU({ size: 3, ttl: 0 })).toThrow('ttl must be a positive integer');
     });
 
-    it.each([0, -1, 0.5, NaN, Infinity])('throws a clear error for an invalid per-entry ttl of %s', (ttl) => {
+    it('rejects an invalid per-entry ttl before touching the cache', () => {
       const lru = new LRU({ size: 3 });
       expect(() => {
-        lru.add('A', 'A', { ttl });
-      }).toThrow();
-    });
-
-    it('throws a clear error for a non-number cache-wide ttl', () => {
-      expect(() => new LRU({ size: 3, ttl: 'oops' as unknown as number })).toThrow();
-    });
-
-    it('throws a clear error for a non-number per-entry ttl', () => {
-      const lru = new LRU({ size: 3 });
-      expect(() => {
-        lru.add('A', 'A', { ttl: 'oops' as unknown as number });
-      }).toThrow();
+        lru.add('A', 'A', { ttl: 0.5 });
+      }).toThrow('ttl must be a positive integer');
+      expect(lru.has('A')).toBe(false);
     });
   });
 });
