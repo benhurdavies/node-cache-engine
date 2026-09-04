@@ -27,6 +27,13 @@ export class LRU<Value, Key = string> implements Cache<Value, Key> {
   }
 
   public add(key: Key, value: Value): void {
+    const existingNode = this.#hashTable.get(key);
+    if (existingNode) {
+      existingNode.value.value = value;
+      this.#linkList.moveToFirst(existingNode);
+      return;
+    }
+
     if (this.size() >= this.#size) this.#handleOverflow();
     const payload = { key, value };
     this.#linkList.addFirst(payload);
