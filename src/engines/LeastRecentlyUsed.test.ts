@@ -209,11 +209,11 @@ describe('LeastRecentlyUsed (LRU)', () => {
       expect(lru.get('A')).toBe('A2');
     });
 
-    it.each([0, -1, NaN, Infinity])('throws a clear error for an invalid cache-wide ttl of %s', (ttl) => {
+    it.each([0, -1, 0.5, NaN, Infinity])('throws a clear error for an invalid cache-wide ttl of %s', (ttl) => {
       expect(() => new LRU({ size: 3, ttl })).toThrow();
     });
 
-    it.each([0, -1, NaN, Infinity])('throws a clear error for an invalid per-entry ttl of %s', (ttl) => {
+    it.each([0, -1, 0.5, NaN, Infinity])('throws a clear error for an invalid per-entry ttl of %s', (ttl) => {
       const lru = new LRU({ size: 3 });
       expect(() => {
         lru.add('A', 'A', { ttl });

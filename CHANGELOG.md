@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- TTL support for the LRU engine: a cache-wide `ttl` (and injectable `now`) on `createCache`/`new LRU(...)`,
-  and a per-entry `ttl` override via `add(key, value, { ttl })`.
+- TTL support for the LRU engine: a cache-wide `ttl` (a positive integer in milliseconds; and an injectable
+  `now`) on `createCache`/`new LRU(...)`, and a per-entry `ttl` override via `add(key, value, { ttl })`.
+  `Ttl` and `PositiveInteger` are exported types.
 
 ### Fixed
 

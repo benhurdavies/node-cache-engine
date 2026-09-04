@@ -148,8 +148,10 @@ cache.add('key', 'new value'); // re-adding an existing key resets it to a full,
   Omitted or `undefined` means entries never expire.
 - `add(key, value, { ttl })` accepts an optional per-entry `ttl` that overrides the cache-wide one for that
   entry only (shorter or longer). It is validated the same way, and an invalid value throws directly from `add`.
-- An invalid `ttl` (anything that isn't a finite number greater than zero - e.g. `0`, a negative number, `NaN`
-  or `Infinity`) throws a clear `Error` from `createCache`, `new LRU(...)`, and `add(...)`.
+- A `ttl` is a positive integer number of milliseconds (`Date.now()` is integral, so a fraction buys nothing).
+  Anything else - `0`, a negative or fractional number, `NaN`, `Infinity`, a non-number - throws
+  `Error('ttl must be a positive integer (milliseconds)')` from `createCache`, `new LRU(...)`, and `add(...)`.
+  The `Ttl` and `PositiveInteger` types are exported for callers that want to name the contract.
 - Expiry is **lazy**: an expired entry is only actually removed the next time it is read via `get`/`has` (which
   then report it as absent), or when it's evicted by overflow. `toArray()` filters out expired entries, so it
   never returns a stale value.

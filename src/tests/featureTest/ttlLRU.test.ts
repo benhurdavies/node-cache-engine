@@ -41,6 +41,7 @@ describe('cache engine ttl (LRU)', () => {
     expect(() => createCache({ ttl: -1 })).toThrow();
     expect(() => createCache({ ttl: NaN })).toThrow();
     expect(() => createCache({ ttl: Infinity })).toThrow();
+    expect(() => createCache({ ttl: 1.5 })).toThrow('ttl must be a positive integer');
   });
 
   it('throws when a ttl is configured for the LFU engine', () => {

@@ -1,4 +1,5 @@
 import type { Cache } from './types/Cache.js';
+import type { Ttl } from './utils/helper.js';
 import { type HashTableConstructor, MapHashTable } from './dataStructure/HashTable.js';
 import { LRU, LFU } from './engines/index.js';
 import { CacheType } from './enums/CacheType.js';
@@ -8,7 +9,7 @@ export type CreateCacheParameters = {
   size?: number;
   engine?: CacheType;
   HashTable?: HashTableConstructor;
-  ttl?: number;
+  ttl?: Ttl;
   now?: () => number;
 };
 

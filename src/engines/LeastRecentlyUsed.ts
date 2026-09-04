@@ -1,7 +1,7 @@
 import { type HashTable, type HashTableConstructor, MapHashTable } from '../dataStructure/HashTable.js';
 import { type DoublyLinkedListNode, DoublyLinkedList } from '../dataStructure/DoublyLinkedList.js';
 import type { Cache } from '../types/Cache.js';
-import { assertValidTtl } from '../utils/helper.js';
+import { assertTtl, type Ttl } from '../utils/helper.js';
 
 export type LruEntry<Value, Key = string> = {
   key: Key;
@@ -16,7 +16,7 @@ export class LRU<Value, Key = string> implements Cache<Value, Key> {
 
   readonly #linkList = new DoublyLinkedList<LruEntry<Value, Key>>();
 
-  readonly #ttl?: number;
+  readonly #ttl?: Ttl;
 
   readonly #now: () => number;
 
@@ -28,19 +28,19 @@ export class LRU<Value, Key = string> implements Cache<Value, Key> {
   }: {
     size?: number;
     HashTable?: HashTableConstructor;
-    ttl?: number;
+    ttl?: Ttl;
     now?: () => number;
   }) {
     if (size <= 0) throw Error('LRU size specified should be greater than zero');
-    if (ttl !== undefined) assertValidTtl(ttl);
+    if (ttl !== undefined) assertTtl(ttl);
     this.#size = size;
     this.#hashTable = new HashTable();
     this.#ttl = ttl;
     this.#now = now;
   }
 
-  public add(key: Key, value: Value, options?: { ttl?: number }): void {
-    if (options?.ttl !== undefined) assertValidTtl(options.ttl);
+  public add(key: Key, value: Value, options?: { ttl?: Ttl }): void {
+    if (options?.ttl !== undefined) assertTtl(options.ttl);
     const ttl = options?.ttl ?? this.#ttl;
     const expiresAt = ttl === undefined ? undefined : this.#now() + ttl;
 
