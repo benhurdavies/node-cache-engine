@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- TTL support for the LRU engine: a cache-wide `ttl` (a positive integer in milliseconds; and an injectable
+  `now`) on `createCache`/`new LRU(...)`, and a per-entry `ttl` override via `add(key, value, { ttl })`.
+  `Ttl` and `PositiveInteger` are exported types.
+
+### Fixed
+
+- Re-adding an existing key now updates it in place instead of orphaning the old linked-list node, which
+  could later cause overflow eviction to delete a live, different entry.
+
 ## [2.0.3] - 2024-05-13
 
 ### Fixed
