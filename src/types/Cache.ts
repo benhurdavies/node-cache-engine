@@ -1,5 +1,5 @@
 export interface Cache<Value, Key = string> {
-  add(key: Key, value: Value): void;
+  add(key: Key, value: Value, options?: { ttl?: number }): void;
   remove(key: Key): void;
   get(key: Key): Value | undefined;
   clearAll(): void;

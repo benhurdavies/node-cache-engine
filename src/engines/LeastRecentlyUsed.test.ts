@@ -107,4 +107,128 @@ describe('LeastRecentlyUsed (LRU)', () => {
       expect(lru.get('A')).toBe('A3');
     });
   });
+
+  describe('TTL', () => {
+    it('expires an entry lazily on get, removing it', () => {
+      let clock = 0;
+      const now = (): number => clock;
+      const lru = new LRU({ size: 3, ttl: 100, now });
+
+      lru.add('A', 'A');
+      clock = 101;
+
+      expect(lru.get('A')).toBe(undefined);
+      expect(lru.size()).toBe(0);
+    });
+
+    it('expires an entry lazily on has, removing it', () => {
+      let clock = 0;
+      const now = (): number => clock;
+      const lru = new LRU({ size: 3, ttl: 100, now });
+
+      lru.add('A', 'A');
+      clock = 101;
+
+      expect(lru.has('A')).toBe(false);
+      expect(lru.size()).toBe(0);
+    });
+
+    it('keeps an entry read before expiry present, and marks it MRU', () => {
+      let clock = 0;
+      const now = (): number => clock;
+      const lru = new LRU({ size: 2, ttl: 100, now });
+
+      lru.add('A', 'A');
+      lru.add('B', 'B');
+      clock = 50;
+      expect(lru.get('A')).toBe('A');
+
+      // A was just read, so it is MRU; overflow should evict B instead.
+      lru.add('C', 'C');
+      expect(lru.has('A')).toBe(true);
+      expect(lru.has('B')).toBe(false);
+      expect(lru.has('C')).toBe(true);
+    });
+
+    it('lets a per-entry ttl override the cache-wide ttl with a shorter duration', () => {
+      let clock = 0;
+      const now = (): number => clock;
+      const lru = new LRU({ size: 3, ttl: 1000, now });
+
+      lru.add('A', 'A', { ttl: 10 });
+      clock = 11;
+
+      expect(lru.get('A')).toBe(undefined);
+    });
+
+    it('lets a per-entry ttl override the cache-wide ttl with a longer duration', () => {
+      let clock = 0;
+      const now = (): number => clock;
+      const lru = new LRU({ size: 3, ttl: 10, now });
+
+      lru.add('A', 'A', { ttl: 1000 });
+      clock = 11;
+
+      expect(lru.get('A')).toBe('A');
+    });
+
+    it('never expires an entry when no ttl is configured anywhere, even after a large clock jump', () => {
+      let clock = 0;
+      const now = (): number => clock;
+      const lru = new LRU({ size: 3, now });
+
+      lru.add('A', 'A');
+      clock = Number.MAX_SAFE_INTEGER;
+
+      expect(lru.get('A')).toBe('A');
+      expect(lru.has('A')).toBe(true);
+    });
+
+    it('omits expired entries from toArray', () => {
+      let clock = 0;
+      const now = (): number => clock;
+      const lru = new LRU({ size: 3, ttl: 100, now });
+
+      lru.add('A', 'A');
+      lru.add('B', 'B', { ttl: 1000 });
+      clock = 101;
+
+      expect(lru.toArray()).toEqual(['B']);
+    });
+
+    it('resets expiresAt to a full fresh ttl when re-adding an existing key', () => {
+      let clock = 0;
+      const now = (): number => clock;
+      const lru = new LRU({ size: 3, ttl: 100, now });
+
+      lru.add('A', 'A1');
+      clock = 90; // just before the original entry would expire
+      lru.add('A', 'A2'); // re-add resets the ttl window
+
+      clock = 150; // would have expired under the original window
+      expect(lru.get('A')).toBe('A2');
+    });
+
+    it.each([0, -1, NaN, Infinity])('throws a clear error for an invalid cache-wide ttl of %s', (ttl) => {
+      expect(() => new LRU({ size: 3, ttl })).toThrow();
+    });
+
+    it.each([0, -1, NaN, Infinity])('throws a clear error for an invalid per-entry ttl of %s', (ttl) => {
+      const lru = new LRU({ size: 3 });
+      expect(() => {
+        lru.add('A', 'A', { ttl });
+      }).toThrow();
+    });
+
+    it('throws a clear error for a non-number cache-wide ttl', () => {
+      expect(() => new LRU({ size: 3, ttl: 'oops' as unknown as number })).toThrow();
+    });
+
+    it('throws a clear error for a non-number per-entry ttl', () => {
+      const lru = new LRU({ size: 3 });
+      expect(() => {
+        lru.add('A', 'A', { ttl: 'oops' as unknown as number });
+      }).toThrow();
+    });
+  });
 });

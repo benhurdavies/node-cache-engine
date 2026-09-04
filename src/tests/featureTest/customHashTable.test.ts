@@ -57,9 +57,9 @@ describe('cache engine lru with custom hash table', () => {
     expect(cache.get('key2')).toEqual({ msg: 'key2' });
     expect(cache.has('key1')).toBe(true);
     // add() now looks up the key first (to update in place instead of
-    // orphaning an existing node), so the two add() calls above each
-    // contribute one get(), plus the explicit cache.get('key2') call.
-    expect(mockHTGet).toHaveBeenCalledTimes(3);
+    // orphaning an existing node), and has() now looks up the node too (to
+    // check lazy TTL expiry), so: 2 add() + 1 explicit get() + 1 has().
+    expect(mockHTGet).toHaveBeenCalledTimes(4);
 
     cache.remove('key1');
 

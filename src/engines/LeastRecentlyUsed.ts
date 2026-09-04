@@ -1,10 +1,12 @@
 import { type HashTable, type HashTableConstructor, MapHashTable } from '../dataStructure/HashTable.js';
 import { type DoublyLinkedListNode, DoublyLinkedList } from '../dataStructure/DoublyLinkedList.js';
 import type { Cache } from '../types/Cache.js';
+import { assertValidTtl } from '../utils/helper.js';
 
 export type LruEntry<Value, Key = string> = {
   key: Key;
   value: Value;
+  expiresAt?: number;
 };
 
 export class LRU<Value, Key = string> implements Cache<Value, Key> {
@@ -14,28 +16,44 @@ export class LRU<Value, Key = string> implements Cache<Value, Key> {
 
   readonly #linkList = new DoublyLinkedList<LruEntry<Value, Key>>();
 
+  readonly #ttl?: number;
+
+  readonly #now: () => number;
+
   constructor({
     size = Number.MAX_SAFE_INTEGER,
     HashTable = MapHashTable,
+    ttl,
+    now = Date.now,
   }: {
     size?: number;
     HashTable?: HashTableConstructor;
+    ttl?: number;
+    now?: () => number;
   }) {
     if (size <= 0) throw Error('LRU size specified should be greater than zero');
+    if (ttl !== undefined) assertValidTtl(ttl);
     this.#size = size;
     this.#hashTable = new HashTable();
+    this.#ttl = ttl;
+    this.#now = now;
   }
 
-  public add(key: Key, value: Value): void {
+  public add(key: Key, value: Value, options?: { ttl?: number }): void {
+    if (options?.ttl !== undefined) assertValidTtl(options.ttl);
+    const ttl = options?.ttl ?? this.#ttl;
+    const expiresAt = ttl === undefined ? undefined : this.#now() + ttl;
+
     const existingNode = this.#hashTable.get(key);
     if (existingNode) {
       existingNode.value.value = value;
+      existingNode.value.expiresAt = expiresAt;
       this.#linkList.moveToFirst(existingNode);
       return;
     }
 
     if (this.size() >= this.#size) this.#handleOverflow();
-    const payload = { key, value };
+    const payload: LruEntry<Value, Key> = { key, value, expiresAt };
     this.#linkList.addFirst(payload);
     const node = this.#linkList.getFirstNode();
     if (!node) throw new Error('Failed to add value');
@@ -43,31 +61,36 @@ export class LRU<Value, Key = string> implements Cache<Value, Key> {
   }
 
   public remove(key: Key): boolean {
-    if (this.has(key)) {
-      const node = this.#hashTable.get(key);
-      if (!node) {
-        throw new Error('Failed to find node in hash table');
-      }
-      this.#linkList.remove(node);
-      this.#hashTable.remove(key);
-      return true;
-    }
-    return false;
+    const node = this.#hashTable.get(key);
+    if (!node) return false;
+    this.#removeNode(node);
+    return true;
   }
 
   public get(key: Key): Value | undefined {
     const node = this.#hashTable.get(key);
-    if (node) {
-      this.#linkList.moveToFirst(node);
-      return node.value.value;
+    if (!node) return undefined;
+    if (this.#isExpired(node.value)) {
+      this.#removeNode(node);
+      return undefined;
     }
-    return undefined;
+    this.#linkList.moveToFirst(node);
+    return node.value.value;
   }
 
   public has(key: Key): boolean {
-    return this.#hashTable.has(key);
+    const node = this.#hashTable.get(key);
+    if (!node) return false;
+    if (this.#isExpired(node.value)) {
+      this.#removeNode(node);
+      return false;
+    }
+    return true;
   }
 
+  // O(1). This can overcount entries that have expired but have not yet
+  // been read/has-checked (which lazily evict them) or evicted by overflow -
+  // an expired-but-untouched entry is still counted here until then.
   public size(): number {
     return this.#linkList.size();
   }
@@ -78,7 +101,20 @@ export class LRU<Value, Key = string> implements Cache<Value, Key> {
   }
 
   public toArray(): Value[] {
-    return this.#linkList.toArray().map((entry: LruEntry<Value, Key>) => entry.value);
+    const now = this.#now();
+    return this.#linkList
+      .toArray()
+      .filter((entry: LruEntry<Value, Key>) => entry.expiresAt === undefined || entry.expiresAt > now)
+      .map((entry: LruEntry<Value, Key>) => entry.value);
+  }
+
+  #isExpired(entry: LruEntry<Value, Key>): boolean {
+    return entry.expiresAt !== undefined && entry.expiresAt <= this.#now();
+  }
+
+  #removeNode(node: DoublyLinkedListNode<LruEntry<Value, Key>>): void {
+    this.#linkList.remove(node);
+    this.#hashTable.remove(node.value.key);
   }
 
   #handleOverflow(): void {
@@ -86,7 +122,6 @@ export class LRU<Value, Key = string> implements Cache<Value, Key> {
     if (!node) {
       throw new Error('Failed to find overflow node');
     }
-    this.#hashTable.remove(node.value.key);
-    this.#linkList.remove(node);
+    this.#removeNode(node);
   }
 }

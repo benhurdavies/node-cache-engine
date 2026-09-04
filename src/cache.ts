@@ -8,14 +8,17 @@ export type CreateCacheParameters = {
   size?: number;
   engine?: CacheType;
   HashTable?: HashTableConstructor;
+  ttl?: number;
+  now?: () => number;
 };
 
 export function createCache<Value, Key = string>(params?: CreateCacheParameters): Cache<Value, Key> {
-  const { size = Number.MAX_SAFE_INTEGER, engine = CacheType.LRU, HashTable = MapHashTable } = params ?? {};
+  const { size = Number.MAX_SAFE_INTEGER, engine = CacheType.LRU, HashTable = MapHashTable, ttl, now } = params ?? {};
   switch (engine) {
     case CacheType.LRU:
-      return new LRU<Value, Key>({ size, HashTable });
+      return new LRU<Value, Key>({ size, HashTable, ttl, now });
     case CacheType.LFU:
+      if (ttl !== undefined) throw new Error('TTL is supported by the LRU engine only');
       return new LFU<Value, Key>({ size, HashTable });
     default:
       return assertUnreachable(`Cache type "${String(engine)}" not supported.`, engine);
